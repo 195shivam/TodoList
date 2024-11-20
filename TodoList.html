@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo-List</title>
+    <link rel="stylesheet" href="todoList.css">
+</head>
+
+<body>
+    <div>
+        <form id="form">
+            <input type="text" name="Task" placeholder="Enter task">
+            <input type="date" name="Date" placeholder="Enter date">
+            <input type="submit" placeholder="Add task">
+        </form>
+    </div>
+    <div id="errorMessage">
+
+    </div>
+    <div>
+        <table id="taskList">
+            <tr>
+                <th>Task</th>
+                <th>Delete</th>
+            </tr>
+        </table>
+    </div>
+</body>
+<script>
+    const privateTask = (()=> {
+        let taskItem = [];
+        const formEl = document.getElementById("form");
+        const errEl = document.getElementById('errorMessage');
+
+        formEl.addEventListener('submit', (e) => {
+            e.preventDefault()
+            
+            const formData = new FormData(formEl)
+            const data = Object.fromEntries(formData)
+            const {Date,Task}=data
+            
+
+            if (!Task && !Date) {
+                errEl.innerHTML= "<span> Enter Task and Date</span>"
+                return;
+                
+            }
+            else if(!Task){
+                errEl.innerHTML= "<span> Enter Task</span>"
+                return;
+            }
+            else if(!Date){
+                errEl.innerHTML= "<span> Enter Date</span>"
+                return;
+            }
+            
+            errEl.innerHTML = null
+            taskItem.push(data)
+            e.target.Task.value=''
+            e.target.Date.value=''
+            loadContent(taskItem.length - 1)
+
+
+
+        })
+
+        // console.log(taskItem)
+
+        function loadContent(id) {
+            const trow = createElement('tr', id)
+            const tdata = createElement('td');
+            tdata.innerText = `${taskItem[id].Task} ${taskItem[id].Date}  `
+            const button = createButton(id, "Delete", 'click', deleteElement);
+            trow.appendChild(tdata);
+            trow.appendChild(button);
+            document.getElementById('taskList').appendChild(trow)
+
+        }
+
+        function deleteElement(id) {
+            const rowToBeDeleted = document.getElementById(id);
+            taskItem.splice(id, 1)
+            console.log(taskItem)
+            rowToBeDeleted.remove()
+        }
+    })()
+
+    function createElement(name, id = null) {
+        const el = document.createElement(name);
+        if (id || id == 0) {
+            el.setAttribute('id', id);
+        }
+        return el;
+    }
+    function createButton(id, buttonName, eventName, buttonEvent) {
+        const button = createElement('Button');
+
+        button.addEventListener(eventName, () => buttonEvent(id))
+        button.innerText = buttonName
+        return button;
+    }
+
+</script>
+
+</html>
